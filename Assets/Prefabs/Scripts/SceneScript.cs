@@ -30,7 +30,7 @@ public class SceneScript : MonoBehaviour
         
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space)) // пауза
+        if (Input.GetKeyDown(KeyCode.Escape)) // пауза
             GamePause();
 
         ShowFps();
