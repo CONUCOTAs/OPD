@@ -41,6 +41,7 @@ public class MainScriptMark : MonoBehaviour
         AddNoticeTxt(new string[] { "Сдвинуть вверх","Сдвинуть вниз" }); // 4
 
 
+
         // для пианино       
         string[] piano_str = new string[] { "Ля #", "Си", "До", "До #", "Ре", "Ре #", "Ми", "Фа", "Фа #", "Соль", "Соль #", "Ля", "Ля #", "Си", "До", "До #" };
         for (int i = 0; i < piano_str.Length; i++)
@@ -49,9 +50,11 @@ public class MainScriptMark : MonoBehaviour
 
         // Для кубиков
         AddNoticeTxt(new string[] { "середина", "верх", "низ" }); // 6
+        AddNoticeTxt(new string[] { "Активировать задание" }); // 10
+
 
     }
-    
+
     public void MarkReady (GameObject mark, int mark_type, int mark_status) // выполняем начальную установку для новой метки
     {
         if (mark_type == 4) // для 4 типа метки меняем начальный цвет
@@ -173,6 +176,19 @@ public class MainScriptMark : MonoBehaviour
             mark.SetMarkStatus(cur_mark_status); // ставим новый статус метки
             RefreshTxtNotice(action_type_txt[cur_mark_type - 1][cur_mark_status]); // обновляем текст подсказки
         }
+
+        else if (cur_mark_type == 7) // кубики, меняем их высоту 
+        {
+            float new_scale = 15f; // для mark_status = 0
+
+            cur_obj.transform.DOScale(new Vector3(new_scale, new_scale, 1), 0.5f);
+
+            mark.DisableMark(); // отключаем скрипт метки
+            Destroy(mark.gameObject); // удаляем объект метки
+
+        }
+
+
     }
         
 
