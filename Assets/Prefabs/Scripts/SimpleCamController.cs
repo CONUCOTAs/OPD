@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -6,6 +7,8 @@ public class SimpleCamController : MonoBehaviour
 {
     public SceneScript scene_script; // скрипт сцены
     private float player_speed;
+    private float player_run_speed;
+    private bool player_run;
     private bool player_walk_forward;
     private bool player_walk_backward;
     private bool player_walk_left;
@@ -30,7 +33,9 @@ public class SimpleCamController : MonoBehaviour
         player_tr = GetComponent<Transform>();
         main_cam = GameObject.FindGameObjectWithTag("MainCamera").GetComponent<Transform>();
         player_speed = 4f;
+        player_run_speed = 6f;
         sensitivityMouse = 4f;
+        player_run = false;
         player_walk_forward = false;
         player_walk_backward = false;
         player_walk_left = false;
@@ -52,13 +57,17 @@ public class SimpleCamController : MonoBehaviour
         total_speed_side = 0;
 
         if (player_walk_forward && !player_walk_backward)
-            total_speed_forward = player_speed;
+            total_speed_forward = player_run ? player_run_speed : player_speed;
+            //total_speed_forward = player_speed + Convert.ToInt32(player_run) * player_run_speed;
         else if (!player_walk_forward && player_walk_backward)
-            total_speed_forward = -player_speed;
+            total_speed_forward = player_run ? -player_run_speed : -player_speed;
+            //total_speed_forward = -player_speed - Convert.ToInt32(player_run) * player_run_speed;
         if (player_walk_left && !player_walk_right)
-             total_speed_side = -player_speed;
+            total_speed_side = player_run ? -player_run_speed : -player_speed;
+            //total_speed_side = -player_speed - Convert.ToInt32(player_run) * player_run_speed;
         else if (!player_walk_left && player_walk_right)
-            total_speed_side = player_speed;
+            total_speed_side = player_run ? player_run_speed : player_speed;
+            //total_speed_side = player_speed + Convert.ToInt32(player_run) * player_run_speed;
 
         player_rb.rotation = Quaternion.Euler(0, camera_rot_input.y, 0);
         if (total_speed_forward != 0 || total_speed_side != 0) // физическое смещение
@@ -76,6 +85,10 @@ public class SimpleCamController : MonoBehaviour
     {
         if (scene_script.GameWorking()) // если игра не на паузе, управление активно
         {
+            if (Input.GetKey(KeyCode.LeftShift)) // бег
+                player_run = true;
+            else player_run = false;
+
             if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.UpArrow)) // вперед
                 player_walk_forward = true;
             else player_walk_forward = false;
@@ -92,12 +105,12 @@ public class SimpleCamController : MonoBehaviour
                 player_walk_right = true;
             else player_walk_right = false;
 
-            if (Input.GetMouseButtonDown(1)) // скрыть курсор
+            if (Input.GetKeyDown(KeyCode.LeftAlt)) // скрыть курсор
             {
                 Cursor.visible = false;
                 Cursor.lockState = CursorLockMode.Locked;
             }
-            if (Input.GetKeyDown(KeyCode.Escape)) // показать курсор
+            if (Input.GetKeyDown(KeyCode.Tab)) // показать курсор
             {
                 if (!Cursor.visible)
                 {
